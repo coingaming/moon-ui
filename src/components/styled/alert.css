@@ -4,7 +4,8 @@
   --alert-bg-mix: theme(colors.base-100);
   background-color: var(--alert-bg);
   &-info {
-    @apply text-info-content border-info/20;
+    /* @apply text-info-content border-info/20; */
+    @apply text-info-content;
     --alert-bg: theme(colors.info);
     --alert-bg-mix: theme(colors.base-100);
   }

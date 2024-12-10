@@ -1,6 +1,4 @@
 node_modules
-yarn.lock
-/package-lock.json
 .next
 /dist
 /colors
@@ -18,3 +16,4 @@ yarn.lock
 /theme
 
 /*.css
+.env

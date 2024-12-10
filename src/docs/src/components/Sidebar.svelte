@@ -35,9 +35,9 @@ let innerWidth = $state(undefined)
     <div class="font-title inline-flex text-lg md:text-2xl">daisyUI</div>
   </a>
 
-  {#await import("./LogoContextMenu.svelte") then Module}
+  <!-- {#await import("./LogoContextMenu.svelte") then Module}
     <Module.default bind:this="{contextMenuEl}" />
-  {/await}
+  {/await} -->
   {#await import("./ChangelogMenu.svelte") then Module}
     <Module.default />
   {/await}

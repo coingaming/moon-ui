@@ -16,7 +16,13 @@ module.exports = {
     extend: {
       colors: require("../theming"),
       fontFamily: {
-        title: ["Figtree", "Noto Sans JP", "Noto Sans", "Vazirmatn", "sans-serif"],
+        title: [
+          "Figtree",
+          "Noto Sans JP",
+          "Noto Sans",
+          "Vazirmatn",
+          "sans-serif",
+        ],
         sans: [
           "ui-sans-serif",
           "system-ui",
@@ -57,7 +63,10 @@ module.exports = {
     process.env.NODE_ENV === "production" ? require("daisyui") : [],
   ],
   presets: [
-    process.env.NODE_ENV === "production" ? [] : require("../components/tailwind.config.js"),
+    process.env.NODE_ENV === "production"
+      ? []
+      : require("../components/tailwind.config.js"),
+    require("./mooncss/moon-base-preset.js"),
     "node_modules/tailwindcss/stubs/defaultConfig.stub.js",
   ],
-}
+};

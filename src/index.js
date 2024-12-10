@@ -1,116 +1,124 @@
 // const tailwindColors = require("tailwindcss/colors")
 // const tailwindPlugin = require("tailwindcss/plugin")
-const tailwindPlugin = require("./lib/createPlugin")
+const tailwindPlugin = require("./lib/createPlugin");
 
-const postcssJs = require("postcss-js")
-const pc = require("picocolors")
-const postcssPrefix = require("./lib/addPrefix")
+const postcssJs = require("postcss-js");
+const pc = require("picocolors");
+const postcssPrefix = require("./lib/addPrefix");
 
-const daisyuiInfo = require("../package.json")
-const utilities = require("../dist/utilities")
-const base = require("../dist/base")
-const unstyled = require("../dist/unstyled")
-const styled = require("../dist/styled")
-const utilitiesUnstyled = require("../dist/utilities-unstyled")
-const utilitiesStyled = require("../dist/utilities-styled")
-const themes = require("./theming/themes")
-const colorFunctions = require("./theming/functions")
-const utilityClasses = require("./lib/utility-classes")
-const colorObject = require("./theming/index")
+const daisyuiInfo = require("../package.json");
+const utilities = require("../dist/utilities");
+const base = require("../dist/base");
+const unstyled = require("../dist/unstyled");
+const styled = require("../dist/styled");
+const utilitiesUnstyled = require("../dist/utilities-unstyled");
+const utilitiesStyled = require("../dist/utilities-styled");
+const themes = require("./theming/themes");
+const colorFunctions = require("./theming/functions");
+const utilityClasses = require("./lib/utility-classes");
+const colorObject = require("./theming/index");
 
 const mainFunction = ({ addBase, addComponents, config }) => {
-  let logs = false
+  let logs = false;
   if (config("daisyui.logs") !== false) {
-    logs = true
+    logs = true;
   }
   if (logs) {
-    console.log()
-    console.log(`🌼   ${pc.magenta("daisyUI")} ${pc.dim(daisyuiInfo.version)}`)
+    console.log();
+    console.log(`🌼   ${pc.magenta("daisyUI")} ${pc.dim(daisyuiInfo.version)}`);
   }
 
   // inject @base style
   if (config("daisyui.base") !== false) {
-    addBase(base)
+    addBase(base);
   }
 
   // inject components
-  let file = styled
+  let file = styled;
   if (config("daisyui.styled") === false) {
-    file = unstyled
+    file = unstyled;
   }
 
   // add prefix to class names if specified
-  const prefix = config("daisyui.prefix")
-  let postcssJsProcess
+  const prefix = config("daisyui.prefix");
+  let postcssJsProcess;
   if (prefix) {
     try {
-      postcssJsProcess = postcssJs.sync(postcssPrefix({ prefix, ignore: [] }))
+      postcssJsProcess = postcssJs.sync(postcssPrefix({ prefix, ignore: [] }));
     } catch (error) {
-      logs && console.error(`Error occurred and prevent applying the "prefix" option:`, error)
+      logs &&
+        console.error(
+          `Error occurred and prevent applying the "prefix" option:`,
+          error
+        );
     }
   }
-  const shouldApplyPrefix = prefix && postcssJsProcess
+  const shouldApplyPrefix = prefix && postcssJsProcess;
   if (shouldApplyPrefix) {
-    file = postcssJsProcess(file)
+    file = postcssJsProcess(file);
   }
 
-  addComponents(file)
+  addComponents(file);
 
-  const themeInjector = colorFunctions.injectThemes(addBase, config, themes)
-  themeInjector
+  const themeInjector = colorFunctions.injectThemes(addBase, config, themes);
+  themeInjector;
 
   // inject @utilities style needed by components
   if (config("daisyui.utils") !== false) {
-    addComponents(utilities, { variants: ["responsive"] })
+    addComponents(utilities, { variants: ["responsive"] });
 
-    let toAdd = utilitiesUnstyled // shadow clone here to avoid mutate the original
+    let toAdd = utilitiesUnstyled; // shadow clone here to avoid mutate the original
     if (shouldApplyPrefix) {
-      toAdd = postcssJsProcess(toAdd)
+      toAdd = postcssJsProcess(toAdd);
     }
-    addComponents(toAdd, { variants: ["responsive"] })
+    addComponents(toAdd, { variants: ["responsive"] });
 
-    toAdd = utilitiesStyled
+    toAdd = utilitiesStyled;
     if (shouldApplyPrefix) {
-      toAdd = postcssJsProcess(toAdd)
+      toAdd = postcssJsProcess(toAdd);
     }
-    addComponents(toAdd, { variants: ["responsive"] })
+    addComponents(toAdd, { variants: ["responsive"] });
   }
 
   if (logs) {
     if (config("daisyui.styled") === false) {
       console.log(
-        `├─ ${pc.yellow("ℹ︎")} ${pc.blue("styled")} ${pc.reset("config is")} ${pc.blue(
-          "false"
-        )} ${pc.dim("\tcomponents won't have design decisions")}`
-      )
+        `├─ ${pc.yellow("ℹ︎")} ${pc.blue("styled")} ${pc.reset(
+          "config is"
+        )} ${pc.blue("false")} ${pc.dim(
+          "\tcomponents won't have design decisions"
+        )}`
+      );
     }
     if (config("daisyui.utils") === false) {
       console.log(
-        `├─ ${pc.yellow("ℹ︎")} ${pc.blue("utils")} ${pc.reset("config is")} ${pc.blue(
-          "false"
-        )} ${pc.dim("\tdaisyUI utility classes are disabled")}`
-      )
+        `├─ ${pc.yellow("ℹ︎")} ${pc.blue("utils")} ${pc.reset(
+          "config is"
+        )} ${pc.blue("false")} ${pc.dim(
+          "\tdaisyUI utility classes are disabled"
+        )}`
+      );
     }
     if (config("daisyui.prefix") && config("daisyui.prefix") !== "") {
       console.log(
         `├─ ${pc.green("✔︎")} ${pc.blue("prefix")} is enabled${pc.dim(
           "\t\tdaisyUI classnames must use"
         )} ${pc.blue(config("daisyui.prefix"))} ${pc.dim("prefix")}`
-      )
+      );
     }
     if (themeInjector.themeOrder.length > 0) {
       console.log(
         `├─ ${pc.green("✔︎")} ${themeInjector.themeOrder.length} ${
           themeInjector.themeOrder.length > 1 ? "themes" : "theme"
         } added${pc.dim("\t\thttps://daisyui.com/docs/themes")}`
-      )
+      );
     }
     if (themeInjector.themeOrder.length === 0) {
       console.log(
         `├─ ${pc.yellow("ℹ︎")} All themes are disabled in config${pc.dim(
           "\t\thttps://daisyui.com/docs/themes"
         )}`
-      )
+      );
     }
     const messages = [
       `${pc.green("❤︎")} ${pc.reset("Support daisyUI project:")}\t${pc.dim(
@@ -119,11 +127,11 @@ const mainFunction = ({ addBase, addComponents, config }) => {
       `${pc.green("★")} ${pc.reset("Star daisyUI on GitHub")}\t${pc.dim(
         "https://github.com/saadeghi/daisyui"
       )}`,
-    ]
-    console.log(`╰─ ${messages[Math.floor(Math.random() * messages.length)]}`)
-    console.log()
+    ];
+    console.log(`╰─ ${messages[Math.floor(Math.random() * messages.length)]}`);
+    console.log();
   }
-}
+};
 
 module.exports = tailwindPlugin(mainFunction, {
   theme: {
@@ -146,4 +154,4 @@ module.exports = tailwindPlugin(mainFunction, {
       ...utilityClasses,
     },
   },
-})
+});
